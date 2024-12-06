@@ -4,16 +4,21 @@ using ConfigFile
 makedocs(
     sitename = "ConfigFile.jl",
     format = Documenter.HTML(
-        prettyurls = false,
-        edit_link = nothing
+        prettyurls = get(ENV, "CI", "false") == "true",
+        canonical = "https://karfas.github.io/ConfigFile.jl",
+        edit_link = "main"
     ),
     modules = [ConfigFile],
     pages = [
         "Home" => "index.md",
         "API Reference" => "api.md"
-    ],
-    remotes = nothing,
-    warnonly = [:missing_docs]
+    ]
+)
+
+deploydocs(
+    repo = "github.com/karfas/ConfigFile.jl.git",
+    devbranch = "main",
+    push_preview = true
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.
