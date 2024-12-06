@@ -112,6 +112,8 @@ struct ConfigData
     function ConfigData(app::String, mode::Symbol)
         fn = config_file(app, mode)
         if !isfile(fn)
+            dir = dirname(fn)
+            !isdir(dir) && mkpath(dir)
             @warn "creating config file $fn"
             YAML.write_file(fn, default_config_data())
         end
@@ -120,6 +122,28 @@ struct ConfigData
         new(c)
     end
 end
+
+"""
+    get(conf::ConfigData, key::Symbol, default) -> Any
+
+Access configuration values with a default fallback value.
+
+# Arguments
+- `conf::ConfigData`: Configuration data instance
+- `key::Symbol`: Configuration key to access
+- `default`: Value to return if key is not found
+
+# Returns
+- The value associated with the key if it exists, otherwise returns the default value
+
+# Example
+```julia
+config = ConfigData("MyApp", :test)
+api_url = get(config, :url, "https://default.example.com")
+timeout = get(config, :timeout, 30)  # returns 30 if timeout is not configured
+```
+"""
+Base.get(conf::ConfigData, key::Symbol, default) = get(conf._data, key, default)
 
 """
     getindex(conf::ConfigData, key::Symbol) -> Any
@@ -133,16 +157,16 @@ Access configuration values using dictionary-style indexing.
 # Returns
 - The value associated with the key
 
+# Throws
+- `KeyError` if the key doesn't exist in the configuration
+
 # Example
 ```julia
 config = ConfigData("MyApp", :test)
 api_url = config[:url]
+timeout = config[:timeout]
 ```
-
-# Throws
-- `KeyError` if the key doesn't exist in the configuration
 """
-import Base.getindex
-getindex(conf::ConfigData, key::Symbol) = getindex(conf._data, key)
+Base.getindex(conf::ConfigData, key::Symbol) = getindex(conf._data, key)
 
 end # module ConfigFile
