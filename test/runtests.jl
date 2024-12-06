@@ -82,6 +82,27 @@ using ConfigFile
         # Test both access methods return same values
         @test get(config, :url, "default") == config[:url]
         @test get(config, :timeout, 60) == config[:timeout]
+        
+        # Test property-style access
+        @test config.url == "https://custom.example.com"
+        @test config.timeout == 30
+        @test config._data isa Dict{Symbol, Any}
+        
+        # Test property-style access throws KeyError for non-existent properties
+        @test_throws KeyError config.nonexistent
+        @test_throws KeyError config.missing_timeout
+        
+        # Test propertynames
+        props = propertynames(config)
+        @test :url in props
+        @test :timeout in props
+        @test :_data in props
+        @test length(props) == length(config._data) + 1  # +1 for _data
+        
+        # Test all access methods return same values
+        @test config.url == config[:url]
+        @test config.timeout == config[:timeout]
+        @test get(config, :url, "default") == config.url
     end
     
     # Cleanup

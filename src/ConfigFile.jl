@@ -180,4 +180,72 @@ See also: [`get`](@ref) for accessing values with default fallbacks.
 """
 Base.getindex(conf::ConfigData, key::Symbol) = getindex(conf._data, key)
 
+"""
+    getproperty(conf::ConfigData, prop::Symbol) -> Any
+
+Access configuration values using dot notation (property-style access).
+This allows accessing configuration values as if they were object properties.
+
+# Arguments
+- `conf::ConfigData`: Configuration data instance
+- `prop::Symbol`: Property name (configuration key)
+
+# Returns
+- The value associated with the property name
+- For the special property `_data`, returns the internal dictionary
+
+# Throws
+- `KeyError` if the property doesn't exist in the configuration (except for `_data`)
+
+# Example
+```julia
+config = ConfigData("MyApp", :test)
+
+# Access values as properties
+api_url = config.url         # returns "https://api.example.com"
+timeout = config.timeout     # returns 10
+
+# Will throw KeyError if property doesn't exist
+try
+    missing_value = config.nonexistent
+catch e
+    @warn "Configuration property not found" property=:nonexistent
+end
+```
+
+See also: [`get`](@ref) for accessing values with default fallbacks, [`getindex`](@ref) for dictionary-style access.
+"""
+function Base.getproperty(conf::ConfigData, prop::Symbol)
+    if prop === :_data
+        return getfield(conf, :_data)
+    end
+    return getindex(conf._data, prop)
+end
+
+"""
+    propertynames(conf::ConfigData) -> Vector{Symbol}
+
+Get the list of available configuration properties.
+
+# Arguments
+- `conf::ConfigData`: Configuration data instance
+
+# Returns
+- A vector of symbols representing available configuration keys
+
+# Example
+```julia
+config = ConfigData("MyApp", :test)
+properties = propertynames(config)  # returns [:url, :key, :secret, :timeout]
+
+# Use with hasfield to check property existence
+if :url in propertynames(config)
+    println("URL configuration exists: \$(config.url)")
+end
+```
+"""
+function Base.propertynames(conf::ConfigData)
+    return [:_data; collect(keys(getfield(conf, :_data)))]
+end
+
 end # module ConfigFile
