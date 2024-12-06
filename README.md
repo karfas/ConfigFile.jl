@@ -18,9 +18,18 @@ A simple and intuitive configuration management package for Julia applications.
 
 ## Installation
 
+You can install ConfigFile.jl in two ways:
+
+1. From the Julia package registry (not yet available):
 ```julia
 using Pkg
 Pkg.add("ConfigFile")
+```
+
+2. Directly from GitHub:
+```julia
+using Pkg
+Pkg.add(url="https://github.com/karfas/ConfigFile.jl.git")
 ```
 
 ## Quick Start
