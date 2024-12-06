@@ -1,0 +1,4 @@
+name = "ConfigFile"
+uuid = "68ed3379-5168-4836-b0d9-80017816bf58"
+authors = ["Thomas Wenrich <twenrich@gmail.com>"]
+version = "0.1.0"
