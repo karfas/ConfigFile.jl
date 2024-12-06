@@ -148,7 +148,7 @@ Base.get(conf::ConfigData, key::Symbol, default) = get(conf._data, key, default)
 """
     getindex(conf::ConfigData, key::Symbol) -> Any
 
-Access configuration values using dictionary-style indexing.
+Access configuration values directly using dictionary-style indexing (`[]`).
 
 # Arguments
 - `conf::ConfigData`: Configuration data instance
@@ -163,9 +163,20 @@ Access configuration values using dictionary-style indexing.
 # Example
 ```julia
 config = ConfigData("MyApp", :test)
-api_url = config[:url]
-timeout = config[:timeout]
+
+# Direct access to configuration values
+api_url = config[:url]        # returns "https://api.example.com"
+timeout = config[:timeout]    # returns 10
+
+# Will throw KeyError if key doesn't exist
+try
+    missing_value = config[:nonexistent]
+catch e
+    @warn "Configuration key not found" key=:nonexistent
+end
 ```
+
+See also: [`get`](@ref) for accessing values with default fallbacks.
 """
 Base.getindex(conf::ConfigData, key::Symbol) = getindex(conf._data, key)
 
