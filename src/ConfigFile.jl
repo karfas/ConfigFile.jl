@@ -122,6 +122,7 @@ struct ConfigData
         new(c)
     end
 end
+export ConfigData
 
 """
     get(conf::ConfigData, key::Symbol, default) -> Any
